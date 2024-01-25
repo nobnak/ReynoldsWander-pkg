@@ -55,7 +55,17 @@ namespace ReynoldsWander {
 
             var wt_local = data.wanderTarget;
             RandomOnCircle(ref rand, out var r);
-            wt_local += dt * wander.jitter * r;
+			switch (wander.jiterMode) {
+				default: {
+					wt_local += dt * wander.jitter * r;
+					break;
+				}
+				case JiterMode.Discrete: {
+					if (rand.NextFloat() < (dt * wander.discrete_acceptance))
+						wt_local += wander.jitter * r;
+					break;
+				}
+			}
             wt_local = math.normalizesafe(wt_local);
             wt_local *= wander.radius;
             data.wanderTarget = wt_local;
@@ -102,13 +112,21 @@ namespace ReynoldsWander {
             public static WanderData Create() => new WanderData() { wanderTarget = INIT_WANDER_TARGET };
         }
 
+		[System.Serializable]
+		public enum JiterMode {
+			Contiuous = 0,
+			Discrete,
+		}
         [System.Serializable]
         [BurstCompile]
         public struct WanderTuner {
-            public float jitter;
+			public float jitter;
             public float radius;
             public float distance;
-        }
+
+			public JiterMode jiterMode;
+			public float discrete_acceptance;
+		}
         [System.Serializable]
         public class Tuner {
             public WanderTuner wander = new WanderTuner();
