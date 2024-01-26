@@ -65,6 +65,10 @@ namespace ReynoldsWander {
 						wt_local += wander.jitter * r;
 					break;
 				}
+				case JiterMode.Random: {
+					wt_local += wander.jitter * r;
+					break;
+				}
 			}
             wt_local = math.normalizesafe(wt_local);
             wt_local *= wander.radius;
@@ -116,6 +120,7 @@ namespace ReynoldsWander {
 		public enum JiterMode {
 			Contiuous = 0,
 			Discrete,
+			Random,
 		}
         [System.Serializable]
         [BurstCompile]
